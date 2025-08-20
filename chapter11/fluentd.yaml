@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  labels:
+    app: fluentd
+spec:
+  selector:
+    matchLabels:
+      app: fluentd
+  template:
+    metadata:
+      labels:
+        app: fluentd
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: fluentd
+          image: fluent/fluentd:v1.19-debian
+          resources:
+            requests:
+              cpu: 100m
+              memory: 200Mi
+            limits:
+              memory: 200Mi
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+            - name: docker-containers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            # containerd 환경 대비 (선택)
+            - name: k8s-containers
+              mountPath: /var/log/containers
+              readOnly: true
+            - name: k8s-pods
+              mountPath: /var/log/pods
+              readOnly: true
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: docker-containers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: k8s-containers
+          hostPath:
+            path: /var/log/containers
+        - name: k8s-pods
+          hostPath:
+            path: /var/log/pods
