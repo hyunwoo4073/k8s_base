@@ -1,0 +1,43 @@
+apiVersion: app/v1
+kind: ReplicaSet
+metadata:
+  name: mysql
+  # 서비스를 이 파드와 연결할 수 있는 라벨
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: database
+        image: mysql
+        resources:
+          requests:
+            cpu: 1
+            memory: 2Gi
+        env:
+        # 보안 측면에서는 환경 변수가 좋은 예는 아님
+        # 예제에서는 간결하게 나타내고자 사용
+        # 더 나은 옵션은 11장 확인
+        - name: MYSQL_ROOT_PASSWORD
+          value: some-password-here
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+          - name: database
+            # /var/lib/mysql은 MYSQL의 데이터베이스가 저장되는 위치
+            mountPath: "/var/lib/mysql"
+      volumes:
+      - name: database
+        persistentVolumeClaim:
+          claimName: database
