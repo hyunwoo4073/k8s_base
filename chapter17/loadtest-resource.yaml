@@ -1,0 +1,71 @@
+# apiVersion: apiextensions.k8s.io/v1beta1
+# Kubernetes 1.16 이후부터 apiextensions.k8s.io/v1beta1 는 deprecated 되었고,
+# Kubernetes 1.22 부터는 완전히 제거
+
+# Kubernetes 1.22+ 부터 apiextensions.k8s.io/v1 CRD는 스키마 정의가 필수
+# spec.versions[*].schema.openAPIV3Schema 를 반드시 정의해야 함
+# v1beta1에서는 optional 이었는데, v1에서는 required 로 바뀌었음
+
+# apiVersion: apiextensions.k8s.io/v1
+# kind: CustomResourceDefinition
+# metadata:
+#   name: loadtests.beta.kuar.com
+# spec:
+#   group: beta.kuar.com
+#   versions:
+#     - name: v1
+#       served: true
+#       storage: true
+#       schema:
+#         openAPIV3Schema:
+#           type: object
+#   scope: Namespaced
+#   names:
+#     plural: loadtests
+#     singular: loadtest
+#     kind: LoadTest
+#     shortNames:
+#     - lt
+
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: loadtests.beta.kuar.com
+spec:
+  group: beta.kuar.com
+  scope: Namespaced
+  names:
+    plural: loadtests
+    singular: loadtest
+    kind: LoadTest
+    shortNames:
+    - lt
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                service:
+                  type: string
+                scheme:
+                  type: string
+                  enum:
+                  - http
+                  - https
+                requestsPerSecond:
+                  type: integer
+                paths:
+                  type: array
+                  items:
+                    type: string
+            status:
+              type: object
+              properties:
+                phase:
+                  type: string

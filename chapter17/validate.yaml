@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: kuar-validator
+webhooks:
+- name: validator.kuar.com
+  rules:
+  - apiGroups:
+    - "beta.kuar.com"
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - loadtests
+  clientConfig:
+    # 웹훅을 위해 적절한 IP로 대체 필요
+    url: https://192.168.1.233:8080
+    # 클러스터를 위해 base64로 인코딩된 CA 인증서 필요
+    # $(KUBECONFIG) 경로에서 파일 확인 가능
+    caBundle: REPLACEME
