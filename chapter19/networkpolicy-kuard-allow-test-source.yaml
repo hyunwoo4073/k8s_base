@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: access-kuard
+  namespace: kuard-networkpolicy
+spec:
+  podSelector:
+    matchLabels:
+      app: kuard
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          run: test-source

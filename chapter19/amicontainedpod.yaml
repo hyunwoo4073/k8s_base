@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: amicontained
+spec:
+  containers:
+    - image: docker.io/jess/amicontained:latest
+      name: amicontained
+      command: [ "/bin/sh", "-c", "--" ]
+      args: [ "amicontained" ]
